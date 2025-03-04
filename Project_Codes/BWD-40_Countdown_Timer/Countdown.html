@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>00:00:00</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20%;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #countdown {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        #timeSelector {
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Countdown Timer</h1>
+    <label for="timeSelector">Select Time:</label>
+    <input type="datetime-local" id="timeSelector">
+    <button onclick="startCountdown()">Start Countdown</button>
+    <div id="countdown">00:00:00</div>
+
+    <script>
+        let intervalId;
+
+        function startCountdown() {
+            clearInterval(intervalId); // Clear any existing countdown
+
+            const timeSelector = document.getElementById('timeSelector');
+            const countdownElement = document.getElementById('countdown');
+
+            const selectedTime = new Date(timeSelector.value);
+            if (isNaN(selectedTime)) {
+                alert("Please select a valid date and time.");
+                return;
+            }
+
+            const targetTime = selectedTime.getTime();
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetTime - now;
+
+                if (distance <= 0) {
+                    countdownElement.innerHTML = "00:00:00";
+                    document.title = "00:00:00";
+                    clearInterval(intervalId);
+
+                    // Play a beep sound when the countdown ends
+                    const beep = new Audio("beep.wav");
+                    beep.play();
+                    return;
+                }
+
+                // Calculate total hours, minutes, and seconds
+                const totalHours = Math.floor(distance / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                const countdownText = `${totalHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                countdownElement.innerHTML = countdownText;
+
+                // Update the browser tab title
+                document.title = countdownText;
+            }
+
+            intervalId = setInterval(updateCountdown, 1000);
+            updateCountdown();
+        }
+    </script>
+</body>
+
+</html>
